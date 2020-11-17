@@ -1,0 +1,2 @@
+# EventBus
+拆解eshoponcontainers中的事件总线，更简单的理解领域事件中的事件总线

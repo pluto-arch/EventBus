@@ -46,13 +46,13 @@ namespace EventBusDemoAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventBusDemoAPI", Version = "v1" });
             });
 
-            // ×¢Èë mqÁ´½Ó¶ÔÏó
+            // æ³¨å…¥ mqé“¾æ¥å¯¹è±¡
             services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                 var factory = new ConnectionFactory()
                 {
-                    HostName = "123.57.71.234",
+                    HostName = "localhost",
                     DispatchConsumersAsync = true
                 };
                 factory.UserName ="guest";
@@ -61,10 +61,10 @@ namespace EventBusDemoAPI
                 return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
             });
 
-            // ×¢²áÄÚ´æ¶©ÔÄ¹ÜÀí
+            // æ³¨å†Œå†…å­˜è®¢é˜…ç®¡ç†
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
-            // ×¢²ámqÊÂ¼ş×ÜÏß
+            // æ³¨å†Œmqäº‹ä»¶æ€»çº¿
             services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
             {
                 var subscriptionClientName = "EventBusDemoAPI";
@@ -82,14 +82,14 @@ namespace EventBusDemoAPI
                     retryCount);
             });
 
-            // ×¢²áÊÂ¼ş´¦Àí³ÌĞò
+            // æ³¨å†Œäº‹ä»¶å¤„ç†ç¨‹åº
             services.AddTransient<DemoEventHandler>();
 
         }
 
 
         /// <summary>
-        /// ÅäÖÃµÚÈı·½(autofac)ÈİÆ÷
+        /// é…ç½®ç¬¬ä¸‰æ–¹(autofac)å®¹å™¨
         /// </summary>
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
@@ -101,7 +101,7 @@ namespace EventBusDemoAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // ×¢²á¶©ÔÄÕß
+            // æ³¨å†Œè®¢é˜…è€…
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<DemoEvent, DemoEventHandler>();
 

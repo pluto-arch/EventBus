@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Pluto.EventBus.Events
+namespace Pluto.EventBus.Abstractions.Events
 {
     /// <summary>
     /// 集成事件基类
     /// </summary>
     public class IntegrationEvent
     {
+        public Guid Id { get; set; }
+
+        public IntegrationEvent()
+        {
+            Id=Guid.NewGuid();
+        }
     }
 }

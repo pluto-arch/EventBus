@@ -81,11 +81,11 @@ namespace EventBus.RabbitMQ
             {
                 _persistentConnection.TryConnect();
             }
-            var policy = RetryPolicy.Handle<BrokerUnreachableException>()
+            var policy = Policy.Handle<BrokerUnreachableException>()
                 .Or<SocketException>()
                 .WaitAndRetry(_retryCount, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)), (ex, time) =>
                 {
-                    
+                    _logger.LogWarning("发布信息出现异常{ex}. {time}s 后重试",ex.GetType().Name,time);
                 });
 
             var eventName = @event.GetType().Name;
@@ -190,6 +190,7 @@ namespace EventBus.RabbitMQ
             }
             catch (Exception ex)
             {
+                _logger.LogError("接收到信息，在处理信息时发生异常 {@ex}",ex);
             }
             _consumerChannel.BasicAck(eventArgs.DeliveryTag, multiple: false);
         }
@@ -214,6 +215,7 @@ namespace EventBus.RabbitMQ
             }
             else
             {
+                _logger.LogWarning("接收到信息：{eventName}，但是未配置任何处理程序",eventName);
             }
         }
 
@@ -224,7 +226,7 @@ namespace EventBus.RabbitMQ
                 _persistentConnection.TryConnect();
             }
 
-            _logger.LogTrace("Creating RabbitMQ consumer channel");
+            _logger.LogTrace("创建MQ消费者通道");
             var channel = _persistentConnection.CreateModel();
             channel.ExchangeDeclare(exchange: BROKER_NAME,
                                     type: "direct");
@@ -236,7 +238,7 @@ namespace EventBus.RabbitMQ
 
             channel.CallbackException += (sender, ea) =>
             {
-                _logger.LogWarning(ea.Exception, "Recreating RabbitMQ consumer channel");
+                _logger.LogWarning(ea.Exception, "创建MQ消费者通道发生错误，尝试重建消费者MQ通道");
                 _consumerChannel.Dispose();
                 _consumerChannel = CreateConsumerChannel();
                 StartBasicConsume();

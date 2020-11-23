@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pluto.EventBus\Pluto.EventBus.csproj" />
+    <ProjectReference Include="..\Pluto.EventBus\Pluto.EventBus.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

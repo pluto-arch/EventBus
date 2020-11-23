@@ -52,7 +52,7 @@ namespace EventBusDemoAPI
                 var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                 var factory = new ConnectionFactory()
                 {
-                    HostName = "123.57.71.234",
+                    HostName = "127.0.0.1",
                     DispatchConsumersAsync = true
                 };
                 factory.UserName ="guest";
@@ -67,18 +67,18 @@ namespace EventBusDemoAPI
             // 注册mq事件总线
             services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
             {
-                var subscriptionClientName = "EventBusDemoAPI";
-                var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                var queryName = "EventBusDemoAPI";
+                var rabbitMqPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
                 var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
                 var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
                 var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
                 var retryCount = 5;
                 return new EventBusRabbitMQ(
-                    rabbitMQPersistentConnection, 
+                    rabbitMqPersistentConnection, 
                     logger, iLifetimeScope, 
                     eventBusSubcriptionsManager, 
-                    subscriptionClientName, 
+                    queryName, 
                     retryCount);
             });
 
